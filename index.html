@@ -1,0 +1,266 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    var searchPage = Umbraco.TypedContent(Model.Content.GetPropertyValue<string>("searchPage"));   
+}
+<nav class="navbar navbar-default navbar-static-top" role="navigation" id="component-navigation">
+    <div class="top-bar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar top-bar"></span>
+                    <span class="icon-bar middle-bar"></span>
+                    <span class="icon-bar bottom-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    <picture>
+                        <source srcset="/images/quorum.gif" media="(min-width: 1024px)">
+                        <img srcset="/images/quorum-small.gif" alt="Quorum">
+                    </picture>
+                </a>
+            </div>
+            <div class="upper-wrapper">
+                <ul class="navbar-upper">
+
+                    @{
+                        //Show all all locations under the locations apge
+
+                        var topNavItems = Model.Content.GetPropertyValue<IList<IPublishedContent>>("topNavLinks");
+                    }
+                    @foreach (var item in topNavItems)
+                    {
+                        var cta = item.GetPropertyValue<CTA>("link", new CTA());
+                        <li><a class="" href="@cta.Link" target="@cta.Target">@cta.Caption</a></li>
+                    }
+                    @*This is the new search*@
+                    @if (searchPage != null)
+                    { 
+                        <li>
+                            <div class="desktop-search-container">
+                                <span class="search-btn glyphicon glyphicon-search"></span>
+                                <input id="desktop-search-box" class="search-box" type="text" maxlength="40" name="query" data-search-url="@searchPage.Url" />
+                                <input id="desktop-search-button" type="submit" class="submit-btn search-submit-btn button-hidden" value="Go" />
+                            </div>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    @*TODO - delete this search div assuming the new one works*@
+    @*@if (searchPage != null)
+    { 
+    <div class="search-bar desktop hidden-xs">
+
+        <div class="container">
+            <input id="desktop-search-box " class="search-box" type="text" placeholder="Search..." maxlength="40" name="query" data-search-url="@searchPage.Url" />
+            <input type="submit" class="submit-btn search-submit-btn" value="Go" />
+        </div>
+    </div>
+    }*@
+    <div class="main-nav-container">
+        <div>
+            
+            <div class="navbar-wrap collapse navbar-collapse" id="navbar">
+                @if (searchPage != null)
+                { 
+                <div class="search-bar mobile search-mobile">
+                    <div class="container">
+                        <input id="mobile-search-box" class="search-box" type="text" placeholder="Search..." maxlength="40" name="query" data-search-url="@searchPage.Url" />
+                        <input type="submit" class="submit-btn search-submit-btn" value="Go" />
+                    </div>
+                </div>
+                }
+                <div class="pinned-nav-container">
+                    <ul class="nav navbar-nav mobile-nav">
+                        <li class="pinned-brand pinned-menu">
+                            <a class="navbar-brand" href="/">
+                                <img alt="Brand" src="~/images/q-mark.png">
+                            </a>
+                        </li>
+                        @foreach (var navSection in Model.Content.GetPropertyValue<IList<IPublishedContent>>("mainNavItems", new List<IPublishedContent>()))
+                        {
+                            var footerLink = navSection.GetPropertyValue<CTA>("footerLink");
+
+                            <li class="dropdown menu-large">
+                                <a href="@(footerLink != null ? footerLink.Link : "#")" class="dropdown-toggle" data-toggle="dropdown">@navSection.GetPropertyValue("Name") </a>
+
+
+                                <ul class="dropdown-menu megamenu row mobile-dropdown">
+                                    @*MOBILE IS PROBABLY TOTALLY WRONG SINCE THE "NAME" ITEM GETS MOVED INTO THE MENU (AND WE HAVE 2 LEVEL AND 3 LEVEL LINKS)*@
+                                    @*TODO: REDO THIS *@
+                                    @foreach (var linkSection in navSection.GetPropertyValue<IList<IPublishedContent>>("linkSections", new List<IPublishedContent>()))
+                                    {
+                                        var headlineCta = linkSection.GetPropertyValue<CTA>("headline", new CTA());
+                                        var childLinks = linkSection.GetPropertyValue<IList<IPublishedContent>>("links", new List<IPublishedContent>());
+                                        var hasSubLinks = childLinks.Any();
+
+                                        if (hasSubLinks)
+                                        {
+                                            <li class="dropdown-submenu">
+                                                <a href="@headlineCta.Link" target="@headlineCta.Target" class="btn-dropdown">@headlineCta.Caption</a>
+                                                <ul class="dropdown-menu">
+                                                    @foreach (var linkItem in childLinks)
+                                                    {
+                                                        var linkCta = linkItem.GetPropertyValue<CTA>("link", new CTA());
+
+                                                        <li class="tertiary-menu"><a href="@linkCta.Link" target="@linkCta.Target" class="">@linkCta.Caption</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="">
+                                                <a href="@headlineCta.Link" target="@headlineCta.Target">@headlineCta.Caption</a>
+                                            </li>
+                                        }
+
+
+                                    }
+
+                                    @*@foreach (var sideCallout in navSection.GetPropertyValue<IList<IPublishedContent>>("sideCallouts", new List<IPublishedContent>()))
+                            {
+                                var link = sideCallout.GetPropertyValue<CTA>("link");
+                                <li><a href="@link.Link" class="" target="@link.Target">@link.Caption</a></li>
+                            }*@
+
+                                    @if (footerLink != null)
+                                    {
+                                        <li><a href="@footerLink.Link" class="footer-link" target="@footerLink.Target">@footerLink.Caption</a></li>
+                                    }
+
+                                </ul>
+                                @{
+                                    var linkSections = navSection.GetPropertyValue<IList<IPublishedContent>>("linkSections", new List<IPublishedContent>());
+                                    var colCount = Math.Min(3, linkSections.Count());
+                                }
+
+                                <ul class="dropdown-menu megamenu row col-count-@colCount hidden-xs">
+                                    <li class="container flyout-panel">
+                                        @{
+
+                                        }@if (@colCount < 3)
+                                        {
+                                            @*<div class="flyout-panel__spacing col-sm-@(colCount == 2 ? "2": "4")">
+                                    </div>*@
+                                        }
+
+                                        <div class="flyout-wrap">
+                                            <div class="col-sm-@(3 * colCount) flyout-panel__links">
+                                                @for (var i = 0; i < linkSections.Count(); i += 3)
+                                                {
+                                                    @*KATRINA:, here is where the repeater needs to happen. after three ul's below, start a new li*@
+                                                    <div class="row">
+                                                        @for (var j = 0; j < 3 && j + i < linkSections.Count; j++)
+                                                        {
+                                                            var linkSection = linkSections.ElementAt(i + j);
+                                                            var headlineCta = linkSection.GetPropertyValue<CTA>("headline", new CTA());
+
+                                                            <div class="flyout-panel__link-group col-sm-@(12/colCount)">
+                                                                <ul>
+                                                                    <li class="menu-overview">
+                                                                        @if (headlineCta.HasLink)
+                                                                        {
+                                                                            <a href="@headlineCta.Link" target="@headlineCta.Target">@headlineCta.Caption</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p>@headlineCta.Caption</p>
+                                                                        }
+                                                                    </li>
+                                                                    @if (linkSection.HasValue("description"))
+                                                                    {
+                                                                        <li><p>@Html.Raw(linkSection.GetPropertyValue("description"))</p></li>
+                                                                    }
+
+                                                                    @foreach (var linkItem in linkSection.GetPropertyValue<IList<IPublishedContent>>("links", new List<IPublishedContent>()))
+                                                                    {
+                                                                        var linkCta = linkItem.GetPropertyValue<CTA>("link", new CTA());
+
+                                                                        <li><a href="@linkCta.Link" class="" target="@linkCta.Target">@linkCta.Caption</a></li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+
+                                                        }
+                                                    </div>
+                                                }
+                                                @if (footerLink != null)
+                                                {
+                                                    <div class="flyout-panel__links__footer row">
+                                                        <a href="@footerLink.Link" class="cta" target="@footerLink.Target">@footerLink.Caption</a>
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                            @if (@colCount < 2)
+                                            {
+                                                <div class="flyout-panel__spacing col-sm-3"></div>
+                                            }
+
+                                            <div class="c-callout flyout-panel__callout hidden-sm">
+                                                @foreach (var sideCallout in navSection.GetPropertyValue<IList<IPublishedContent>>("sideCallouts", new List<IPublishedContent>()))
+                                                {
+                                                    var link = sideCallout.GetPropertyValue<CTA>("link", new CTA());
+                                                    var image = sideCallout.GetPropertyValue<IPublishedContent>("image");
+                                                    <div class="menu-callout">
+                                                        @if (image != null)
+                                                        {
+                                                            <img src="@image.Url.GetCropUrl(height:95, width:287)" style="max-width:100%" />
+                                                        }
+                                                        <p>@sideCallout.GetPropertyValue("headline")</p>
+                                                        <a href="@link.Link" target="@link.Target">@link.Caption</a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </li>
+
+                                </ul>
+
+
+                            </li>
+                                            }
+
+                        @foreach (var calloutLink in Model.Content.GetPropertyValue<IList<IPublishedContent>>("mainNavCalloutLinks", new List<IPublishedContent>()))
+                        {
+                            var cta = calloutLink.GetPropertyValue<CTA>("link", new CTA());
+                            <li class="dropdown menu-large menu-demo-large">
+                                <a class="menu-demo" href="@cta.Link" target="@cta.Target">@cta.Caption</a>
+                            </li>
+                        }
+
+                        @foreach (var item in topNavItems)
+                        {
+                            var cta = item.GetPropertyValue<CTA>("link", new CTA());
+                            <li class="visible-xs"><a class="" href="@cta.Link" target="@cta.Target">@cta.Caption</a></li>
+                        }
+
+                        @if (searchPage != null)
+                        {
+                            //New pinnned search
+                            <li class="search pinned-menu pinned-search">
+                                <div class="pinned-search-container">
+                                    <span class="search-btn glyphicon glyphicon-search"></span>
+                                    <input id="pinned-search-box" class="search-box" type="text" maxlength="40" name="query" data-search-url="@searchPage.Url" />
+                                    <input id="pinned-search-button" type="submit" class="submit-btn search-submit-btn button-hidden" value="Go" />
+                                </div>
+                            </li>
+
+                            //Old pinned search
+
+                            //<li class="search pinned-menu pinned-search"><a href="#search" class="search-btn glyphicon glyphicon-search"></a></li>
+                        }
+                    </ul>
+                    </div>
+
+                </div>
+
+        </div>
+    </div>
+</nav>

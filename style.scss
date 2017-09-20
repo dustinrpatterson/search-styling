@@ -1,0 +1,219 @@
+/*NEW search styling*/
+
+.desktop-search-container {
+    color: $gray-shale;
+    background-color: $gray-pipeline;
+    border: solid 0px $gray-pipeline;
+    border-bottom-right-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-top-left-radius: 25px;
+    margin-top: -5px;
+    height: 40px;
+    padding-right: 12px;
+
+
+    & span.search-btn {
+
+        @media (min-width: $screen-xs) {
+            padding: 10px 0px 2px 15px;
+        }
+    }
+
+    .search-submit-btn {
+        border: none;
+        background-color: transparent;
+        border-radius: 25px;
+    }
+
+    input[type=text] {
+        outline: none;
+        -webkit-appearance: textfield;
+        -webkit-box-sizing: content-box;
+    }
+
+    input::-webkit-search-decoration,
+    input::-webkit-search-cancel-button {
+        display: none;
+    }
+
+
+    input[type=text] {
+        background-color: $gray-pipeline;
+        border: none;
+        width: 0px;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+    }
+
+    input[type=text]:focus {
+        width: 250px;
+    }
+
+    input:-moz-placeholder {
+        color: black;
+    }
+
+    input::-webkit-input-placeholder {
+        color: black;
+    }
+
+    .button-hidden {
+        display: none;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+    }
+}
+
+// Everything below is from the pinned bar
+@media (min-width: $grid-float-breakpoint) {
+    .sticky {
+        position: fixed;
+        width: 100%;
+
+        .top-bar {
+            display: none;
+        }
+
+        .pinned-brand {
+            padding-top: 10px;
+            margin-right: auto;
+            max-width: 100%;
+
+            a:hover {
+                background-color: transparent !important;
+            }
+        }
+
+        .pinned-search {
+            margin-left: auto;
+            max-width: 100%;
+        }
+
+        .pinned-menu {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity .25s ease-in-out;
+
+            .search-btn {
+                height: 48px;
+            }
+
+            &.close-search {
+                .search-btn {
+                    margin: 0;
+                    padding: 0 40px 0 25px;
+                    background-image: none;
+                    text-indent: 0;
+
+                    &:before {
+                        content: "\e014";
+                    }
+
+                    &:hover, &:focus, &:active {
+                        //background-color: transparent;
+                    }
+                }
+
+                a:before {
+                    content: none;
+                }
+            }
+        }
+    }
+
+    /*NEW pinned search styling*/
+    .pinned-nav-container {
+        max-width: 1312px;
+        margin: auto;
+
+
+    }
+
+
+    .pinned-search-container {
+        color: white;
+        background-color: transparent;
+        border: none;
+        height: 40px;
+        padding-right: 12px;
+        font-size: 14px;
+        overflow: hidden;
+        position: relative;
+        display: inline-block;
+
+
+        & span.search-btn {
+
+            @media (min-width: $screen-xs) {
+                padding: 15px 0px 2px 10px;
+            }
+        }
+
+        .search-submit-btn {
+            border: none;
+            background-color: transparent;
+
+            @media (min-width: $screen-sm) {
+                font-size: 11px;
+            }
+
+            @media (min-width: $screen-md) {
+                font-size: 14px;
+            }
+        }
+
+        input[type=text] {
+            outline: none;
+            -webkit-appearance: textfield;
+            -webkit-box-sizing: content-box;
+        }
+
+        input::-webkit-search-decoration,
+        input::-webkit-search-cancel-button {
+            display: none;
+        }
+
+
+        input[type=text] {
+            @media (min-width: $screen-sm) {
+                font-size: 11px;
+            }
+
+            @media (min-width: $screen-md) {
+                font-size: 14px;
+            }
+
+            background-color: transparent;
+            border: none;
+            width: 0px;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+
+        input[type=text]:focus {
+            width: 50px;
+        }
+
+        input:-moz-placeholder {
+            color: white;
+        }
+
+        input::-webkit-input-placeholder {
+            color: white;
+        }
+
+        .button-hidden {
+            display: none;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+    }
+
+
+}
+
